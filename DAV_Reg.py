@@ -137,86 +137,83 @@ if st.button("Submit Enquiry"):
         st.error("Message cannot be empty.")
 
     else:
-
-        import requests
-import base64
-from io import StringIO
-
-# ---------------- GITHUB DETAILS ----------------
-
-GITHUB_TOKEN = st.secrets["GITHUB_TOKEN"]
-
-REPO_OWNER = "YOUR_GITHUB_USERNAME"
-REPO_NAME = "YOUR_REPO_NAME"
-
-FILE_PATH = "student_enquiries.csv"
-
-url = f"https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/contents/{FILE_PATH}"
-
-headers = {
-    "Authorization": f"token {GITHUB_TOKEN}",
-    "Accept": "application/vnd.github.v3+json"
-}
-
-# ---------------- READ EXISTING CSV ----------------
-
-response = requests.get(url, headers=headers)
-
-file_data = response.json()
-
-content = base64.b64decode(file_data["content"]).decode("utf-8")
-
-existing_df = pd.read_csv(StringIO(content))
-
-# ---------------- DUPLICATE CHECK ----------------
-
-duplicate = (
-    (existing_df["Name"].str.strip().str.lower() == name.strip().lower()) &
-    (existing_df["Class"].astype(str) == str(student_class)) &
-    (existing_df["Section"].str.strip().str.lower() == section.strip().lower())
-).any()
-
-if duplicate:
-    st.error("Duplicate enquiry found.")
-
-else:
-
-    new_row = pd.DataFrame({
-        "Name": [name],
-        "Class": [student_class],
-        "Section": [section],
-        "Gender": [gender],
-        "Mobile": [mobile],
-        "Email": [email],
-        "Message": [message],
-        "Date": [date.today()]
-    })
-
-    updated_df = pd.concat([existing_df, new_row], ignore_index=True)
-
-    csv_content = updated_df.to_csv(index=False)
-
-    encoded_content = base64.b64encode(
-        csv_content.encode("utf-8")
-    ).decode("utf-8")
-
-    data = {
-        "message": "Update CSV from Streamlit",
-        "content": encoded_content,
-        "sha": file_data["sha"]
-    }
-
-    requests.put(url, headers=headers, json=data)
-
-    st.success("Enquiry submitted successfully!")
-    st.balloons()
-
+        
+        
+        # ---------------- GITHUB DETAILS ----------------
+        
+        GITHUB_TOKEN = st.secrets["GITHUB_TOKEN"]
+        
+        REPO_OWNER = "ImRustyyy750"
+        REPO_NAME = "DAV-Streamlit-Form"
+        
+        FILE_PATH = "student_enquiries.csv"
+        
+        url = f"https://api.github.com/repos/{REPO_OWNER}/{REPO_NAME}/contents/{FILE_PATH}"
+        
+        headers = {
+            "Authorization": f"token {GITHUB_TOKEN}",
+            "Accept": "application/vnd.github.v3+json"
+        }
+        
+        # ---------------- READ EXISTING CSV ----------------
+        
+        response = requests.get(url, headers=headers)
+        
+        file_data = response.json()
+        
+        content = base64.b64decode(file_data["content"]).decode("utf-8")
+        
+        existing_df = pd.read_csv(StringIO(content))
+        
+        # ---------------- DUPLICATE CHECK ----------------
+        
+        duplicate = (
+            (existing_df["Name"].str.strip().str.lower() == name.strip().lower()) &
+            (existing_df["Class"].astype(str) == str(student_class)) &
+            (existing_df["Section"].str.strip().str.lower() == section.strip().lower())
+        ).any()
+        
+        if duplicate:
+            st.error("Duplicate enquiry found.")
+        
         else:
-            # If file is not present, this will create new csv
-            new_df.to_csv(filename, index=False)
-
+        
+            new_row = pd.DataFrame({
+                "Name": [name],
+                "Class": [student_class],
+                "Section": [section],
+                "Gender": [gender],
+                "Mobile": [mobile],
+                "Email": [email],
+                "Message": [message],
+                "Date": [date.today()]
+            })
+        
+            updated_df = pd.concat([existing_df, new_row], ignore_index=True)
+        
+            csv_content = updated_df.to_csv(index=False)
+        
+            encoded_content = base64.b64encode(
+                csv_content.encode("utf-8")
+            ).decode("utf-8")
+        
+            data = {
+                "message": "Update CSV from Streamlit",
+                "content": encoded_content,
+                "sha": file_data["sha"]
+            }
+        
+            requests.put(url, headers=headers, json=data)
+        
             st.success("Enquiry submitted successfully!")
             st.balloons()
+        
+                else:
+                    # If file is not present, this will create new csv
+                    new_df.to_csv(filename, index=False)
+        
+                    st.success("Enquiry submitted successfully!")
+                    st.balloons()
 
 st.markdown("---")
 st.markdown("Made with ❤️ by Shriswarup")
