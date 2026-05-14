@@ -208,12 +208,5 @@ if st.button("Submit Enquiry"):
             st.success("Enquiry submitted successfully!")
             st.balloons()
         
-                else:
-                    # If file is not present, this will create new csv
-                    new_df.to_csv(filename, index=False)
-        
-                    st.success("Enquiry submitted successfully!")
-                    st.balloons()
-
 st.markdown("---")
 st.markdown("Made with ❤️ by Shriswarup")
