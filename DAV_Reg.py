@@ -209,4 +209,4 @@ if st.button("Submit Enquiry"):
             st.balloons()
         
 st.markdown("---")
-st.markdown("Made with ❤️ by Shriswarup")
+st.markdown("### Made with ❤️ by Shriswarup")
